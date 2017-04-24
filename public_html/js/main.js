@@ -147,7 +147,8 @@ function makeDisplay(data, position)
     var top = createTexturePatch(length, texturearray.a,position.top);
     var bot = createTexturePatch(length, texturearray.b, position.bot);
     scene.add(top,bot);
-    var timer = setTimeout(screenwipe, 5000)
+    var wipetimer = setTimeout(screenwipe, 5000)
+    changeglobal('wipetimer', wipetimer);
 }
 
 function findtextures(data)
@@ -169,6 +170,8 @@ function findtextures(data)
 function nextTrial()
 {
     var test = globallookup('data');
+    let wipetimer = globallookup('wipetimer');
+    clearTimeout(wipetimer)
     recResults(test[globallookup('num' )], resultArray);
     screenwipe();
     var num = globallookup('num') ;
@@ -230,6 +233,7 @@ function screenwipe()
             scene.remove(scene.children[i]);
         }
     }
+    console.log(curtime - globallookup('trialStartTime'))
 }
 
 

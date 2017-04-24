@@ -8,13 +8,25 @@ var textureMaterial;
 function makeTextures(texturePath, patharray = undefined){
     return new Promise(function(resolve, reject){
         var loader = new THREE.TextureLoader();
+        loader.crossOrigin = '';
         console.log("Loading ", texturePath, "with:",  loader);
         // load a resource
         var texturearray = [];
-        for(let val of patharray)
+        if (typeof patharray === 'object')
         {
-            let temppath = texturePath + val;
-            let texture = loader.load(temppath);
+            for(let val of patharray)
+            {
+                let temppath = texturePath + val;
+                let texture = loader.load(temppath);
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.name = val.slice(0,2);
+                texturearray.push(texture);
+            }
+        }
+        else  
+        {
+            var texture  = loader.load(temppath);
             texture.wrapS = THREE.RepeatWrapping;
             texture.wrapT = THREE.RepeatWrapping;
             texture.name = val.slice(0,2);
