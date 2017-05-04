@@ -61,7 +61,6 @@ var fov = 100;
 
 //var camera = new THREE.PerspectiveCamera(fov, w/h, 0.1, 1000);
 camera.position.z = 7;
-camera.position.y = -1;
 //camera.position.x = -5;
 
 /*Create scene/stage*/
@@ -90,7 +89,7 @@ function maininit()
         num: 0,
         repeat: 0,
         numRepeat: 10,
-        barlength: 4
+        baseLength: 4
     };
     globalproperties['positions'] = {
         top: {x:0, y:2},
@@ -124,6 +123,7 @@ createSuperbackground();
 function startup()
 {
     createTestArray();
+    midlineAxes();
 //    var subject = prompt('participant');
 //    changeglobal('subject', subject);
     createOutput(globallookup('data'),globallookup('headings'));
@@ -143,13 +143,30 @@ function makeDisplay(data, position)
 {
     var texturearray = findtextures(data.image);
 //    console.log(texturearray)
-    var length = globallookup('barlength');
+    var baselength = globallookup('baseLength');
+    var imagescalar = data.length;
+    var length = imagescalar*baselength;
     var top = createTexturePatch(length, texturearray.a,position.top);
     var bot = createTexturePatch(length, texturearray.b, position.bot);
     scene.add(top,bot);
-    var wipetimer = setTimeout(screenwipe, 5000)
-    changeglobal('wipetimer', wipetimer);
+    changeglobal('trialStartTime', Date.now());
+    wipetimer = setTimeout(screenwipe, 5000);
 }
+
+function midlineAxes()
+{
+    var length = w;
+    var geometry = new THREE.PlaneGeometry(length, .05);
+    var properties = {
+        color: new THREE.Color(1,1,1)
+    };
+    var material = new THREE.MeshBasicMaterial(properties);
+    var mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh.clone());
+    mesh.rotation.z = Math.PI/2;
+    scene.add(mesh.clone());
+}
+
 
 function findtextures(data)
 {
@@ -170,8 +187,7 @@ function findtextures(data)
 function nextTrial()
 {
     var test = globallookup('data');
-    let wipetimer = globallookup('wipetimer');
-    clearTimeout(wipetimer)
+    clearTimeout(wipetimer);
     recResults(test[globallookup('num' )], resultArray);
     screenwipe();
     var num = globallookup('num') ;

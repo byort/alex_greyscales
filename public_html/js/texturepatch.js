@@ -61,6 +61,7 @@ makeTextures("img/greyscale", ['1a.jpg', '1b.jpg','2a.jpg','2b.jpg','3a.jpg','3b
     textures = materialarray;
     init();
             });
+       
 function createTexturePatch(length, texture, position)
 {
     
