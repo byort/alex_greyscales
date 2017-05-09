@@ -88,7 +88,7 @@ function maininit()
     globalproperties['main'] = {
         num: 0,
         repeat: 0,
-        numRepeat: 1,
+        numRepeat: 5,
         baseLength: 4
     };
     globalproperties['positions'] = {

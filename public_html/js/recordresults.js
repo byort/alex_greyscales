@@ -56,15 +56,35 @@ function outputResponses()
 {
     /* Add MIME type header to your data & encode it in URI format to download */
     var csvString = globallookup('csvString');
+    var datestring = getdate();
     $.ajax({
         method: 'POST',
         url: 'upload.php',
-        data: 'string' + csvString,
+        data: {
+            string: csvString,
+            datestring: datestring
+        },
         success: function(){
             alert('Responses received. \nThank you for participating')
         }
     })
 }
+
+function getdate()
+{
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    var d = new Date();
+    var day = d.getDate();
+    var month = d.getMonth();
+    var h = d.getHours();
+    var m = d.getMinutes();
+    if (m<10)
+        m = '0'+m;
+//    console.log(h, m);
+    var datestring = h + '' + m + '_' + day+months[month];
+    return datestring;
+}
+
 function toCSV(array)
 {
     var tempstring = '';
