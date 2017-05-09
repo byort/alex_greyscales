@@ -237,7 +237,7 @@ document.onkeydown = function(key)
 
 function exit()
 {
-    outputResponses();
+//    outputResponses();
 //    window.location.reload();
 }
 function screenwipe()
