@@ -56,21 +56,14 @@ function outputResponses()
 {
     /* Add MIME type header to your data & encode it in URI format to download */
     var csvString = globallookup('csvString');
-    var xml = new XMLHttpRequest();
-    xml.open('POST', 'upload.php',true);
-    xml.setRequestHeader('content-type', "application/x-www-form-urlencoded")
-    xml.onreadystatechange = function() {
-        console.log(xml);
-        if(xml.readyState == 4 && xml.status == 200) {
-            console.log('ready to receive')
-            var uploadResult = xml.responseText;
-            console.log(uploadResult);
-//            if (uploadResult === 'success'){
-//                alert('Responses received. Thank you for participating.')
-//            }
-        };
-    };
-    xml.send(csvString);
+    $.ajax({
+        method: 'POST',
+        url: 'upload.php',
+        data: 'string' + csvString,
+        success: function(){
+            alert('Responses received. \nThank you for participating')
+        }
+    })
 }
 function toCSV(array)
 {
