@@ -52,23 +52,25 @@ function recResults(dataobj, resultobj)
 //    console.log(globallookup('csvString'));
 }
 
-function outputResponses(log)
+function outputResponses()
 {
     /* Add MIME type header to your data & encode it in URI format to download */
-    var csvContent = "data:text/csv;charset=utf-8," + globallookup('csvString');
-    csvContent = encodeURI(csvContent);
-
-    /*Create a link to download from & force a click*/
-    ////http://stackoverflow.com/questions/17836273/export-javascript-data-to-csv-file-without-server-interaction
-    var a = document.createElement('a');
-    a.href = csvContent;
-    a.target = '_blank';
-    var subject = globallookup('subject');
-    a.download = subject + 'results4.csv';
-    a.innerHTML = "<h4>Click to download results!</h4>";
-    //    
-    document.body.appendChild(a);
-    a.click();   
+    var csvString = globallookup('csvString');
+    var xml = new XMLHttpRequest();
+    xml.open('POST', 'upload.php',true);
+    xml.setRequestHeader('content-type', "application/x-www-form-urlencoded")
+    xml.onreadystatechange = function() {
+        console.log(xml);
+        if(xml.readyState == 4 && xml.status == 200) {
+            console.log('ready to receive')
+            var uploadResult = xml.responseText;
+            console.log(uploadResult);
+//            if (uploadResult === 'success'){
+//                alert('Responses received. Thank you for participating.')
+//            }
+        };
+    };
+    xml.send(csvString);
 }
 function toCSV(array)
 {

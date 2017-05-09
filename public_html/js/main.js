@@ -88,7 +88,7 @@ function maininit()
     globalproperties['main'] = {
         num: 0,
         repeat: 0,
-        numRepeat: 10,
+        numRepeat: 1,
         baseLength: 4
     };
     globalproperties['positions'] = {
@@ -123,7 +123,7 @@ createSuperbackground();
 function startup()
 {
     createTestArray();
-    midlineAxes();
+//    midlineAxes();
 //    var subject = prompt('participant');
 //    changeglobal('subject', subject);
     createOutput(globallookup('data'),globallookup('headings'));
@@ -209,7 +209,6 @@ function nextTrial()
         }
         else
         {
-            alert("finito");
             exit();
         }
     }
