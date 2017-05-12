@@ -47,7 +47,7 @@ function makeTextures(texturePath, patharray = undefined){
         }
     );
 }
-makeTextures("img/greyscale", ['1a.jpg', '1b.jpg','2a.jpg','2b.jpg','3a.jpg','3b.jpg']).then(function(texturearray){
+makeTextures("img/greyscale", ['10.bmp','15.bmp','20.bmp']).then(function(texturearray){
     var materialarray = [];
     for(let val of texturearray)
     {

@@ -2,8 +2,7 @@
 function testarrayinit()
 {
     globalproperties['variables']={
-        image: ['1', '2', '3' ],
-        length:[1, 1.25, 1.5, 1.75, 2, 2.25]
+        length:[1, 1.5, 2],
     }
 }
 function createTestArray()

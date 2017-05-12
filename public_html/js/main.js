@@ -141,13 +141,14 @@ function createtrial()
 
 function makeDisplay(data, position)
 {
-    var texturearray = findtextures(data.image);
+    var texturearray = findtextures(data);
 //    console.log(texturearray)
     var baselength = globallookup('baseLength');
     var imagescalar = data.length;
     var length = imagescalar*baselength;
-    var top = createTexturePatch(length, texturearray.a,position.top);
-    var bot = createTexturePatch(length, texturearray.b, position.bot);
+    var top = createTexturePatch(length, texturearray, position.top);
+    var bot = createTexturePatch(length, texturearray, position.bot);
+    bot.rotation.z = Math.PI;
     scene.add(top,bot);
     changeglobal('trialStartTime', Date.now());
     wipetimer = setTimeout(screenwipe, 5000);
@@ -171,14 +172,12 @@ function midlineAxes()
 function findtextures(data)
 {
     var obj = {};
+    var name = String(data.length*10);
     for(let material of textures)
     {
-        for(let suffix of ['a','b'])
+        if(material.map.name === name)
         {
-            if(material.map.name === data+suffix)
-            {
-                obj[suffix] = material;
-            }
+            obj = material;
         }
     }
     return obj;
