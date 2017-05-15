@@ -53,7 +53,12 @@ function createTexturePatch(length, texture, position)
     var height = globallookup('barHeight');
     var material = texture;
     var geometry = new THREE.PlaneGeometry(length, height);
+//    var height = material.map.image.height;
+//    var width = material.map.image.width;
+//    var geometry = new THREE.PlaneGeometry(1,1)
     var mesh = new THREE.Mesh(geometry, material);
+//    mesh.scale.x = width;
+//    mesh.scale.y = height;
     mesh.position.x = position.x;
     mesh.position.y = position.y;
     mesh.name = "wipe";

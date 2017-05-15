@@ -183,10 +183,10 @@ function createOverlay(data, position)
     var baselength = globallookup('baseLength');
     var length = baselength * data.length;
     var num = Math.floor(length);
-    var textoverlay = createTextArray(num, height);
+    var textoverlay = createTextArray(data.letter, num, height);
     if(data.orientation === 1)
     {
-        textoverlay.rotation.z += Math.PI;
+        textoverlay.rotation.y += Math.PI;
     }
     textoverlay.position.y = position.top.y;
     textoverlay.position.x = position.top.x;
@@ -196,12 +196,12 @@ function createOverlay(data, position)
     scene.add(textoverlay.clone());
 }
 
-function createTextArray(num, height)
+function createTextArray(letter, num, height)
 {
     var tempobj = new THREE.Object3D();
     for (var i=0; i<num; i++)
     {
-        let text = createText("E", height*.8);
+        let text = createText(letter, height*.8);
         text.position.y = -0.4*height;
         text.position.x = -num/2 + i + .1;
         tempobj.add(text);
@@ -220,13 +220,14 @@ function createText(textstring, size)
     var parameters = {
         font: loadedFont, 
         size: size,
-        height: .1,
+        height: .1
     };
 //    var shape = new THREE.FontUtils.generateShapes("Hello World", parameters);
 //    var geometry = new THREE.ShapeGeometry(shape);
     var geometry = new THREE.TextGeometry(textstring, parameters);
     var properties = {
         color: new THREE.Color(.5,.5,.5),
+//        wireframe: true,
         opacity: .5,
         transparent: true
     };

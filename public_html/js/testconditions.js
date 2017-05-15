@@ -3,7 +3,8 @@ function testarrayinit()
 {
     globalproperties['variables']={
         length:[1, 1.5, 2],
-        orientation: [0, 1] // 0 = normal, 1 = inverted
+        orientation: [0, 1], // 0 = normal, 1 = inverted
+        letter: ['E','R','G']
     }
 }
 function createTestArray()

@@ -14,7 +14,11 @@ body{
     /*vertical-align: middle;*/
 }
 #2dcanvas{
-    display: block;
-    background: transparent;
-    
+    display: inline;
+    vertical-align: middle;
+    background: blue;
+    top: 400px;
+    width: 322px;
+    height: 81px;
+    z-index: 1;
 }
