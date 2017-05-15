@@ -47,26 +47,12 @@ function makeTextures(texturePath, patharray = undefined){
         }
     );
 }
-makeTextures("img/greyscale", ['10.bmp','15.bmp','20.bmp']).then(function(texturearray){
-    var materialarray = [];
-    for(let val of texturearray)
-    {
-        var imageMaterial = new THREE.MeshBasicMaterial({
-            map: val,
-            color: new THREE.Color(1,1,1)
-        });
-        materialarray.push(imageMaterial);
-    }
-    //Now do something with the texture mapped mesh
-    textures = materialarray;
-    init();
-            });
        
 function createTexturePatch(length, texture, position)
 {
-    
+    var height = globallookup('barHeight');
     var material = texture;
-    var geometry = new THREE.PlaneGeometry(length, 1);
+    var geometry = new THREE.PlaneGeometry(length, height);
     var mesh = new THREE.Mesh(geometry, material);
     mesh.position.x = position.x;
     mesh.position.y = position.y;

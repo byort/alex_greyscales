@@ -7,7 +7,7 @@ $(window).resize(function(){
 /*Handles window resizes. */
 function onWindowResize(){
     
-    console.log(camera);
+//    console.log(camera);
     
     var w = $(window).innerWidth();
     var h = $(window).innerHeight();
@@ -49,9 +49,13 @@ var h = $(window).innerHeight();
 /**********************************Necessary THREE.JS setup things*************************************/
 /*Create the renderer, set its size and add it to the page*/
 var renderer = new THREE.WebGLRenderer();
+//var renderer2D = new THREE.CanvasRenderer();
 renderer.setSize(w, h);
+
 var canvas = $('#three-canvas');
+//var canvas2D = $('2dcanvas');
 canvas.append(renderer.domElement);
+//canvas2D.append(renderer2D.domElement);
 
 /*Create camera (orthographic means you DONT have FORESHORTENING)*/
 var camerascalar = 175;
@@ -74,6 +78,23 @@ scene.add(light);
 
 
 /**********************WORKSPACE**************************/
+makeTextures("img/greyscale", ['10.bmp','15.bmp','20.bmp']).then(function(texturearray){
+    var materialarray = [];
+    for(let val of texturearray)
+    {
+        var imageMaterial = new THREE.MeshBasicMaterial({
+            map: val,
+            color: new THREE.Color(1,1,1)
+        });
+        materialarray.push(imageMaterial);
+    }
+    //Now do something with the texture mapped mesh
+    textures = materialarray;
+    }).then(loadFont.bind( null ,"font/helvetiker_regular.typeface.json")).then(function(font){
+        console.log('2',font);
+        loadedFont = font;
+        init();
+    });
 
 function init()
 {
@@ -89,7 +110,8 @@ function maininit()
         num: 0,
         repeat: 0,
         numRepeat: 5,
-        baseLength: 4
+        baseLength: 4,
+        barHeight: 1
     };
     globalproperties['positions'] = {
         top: {x:0, y:2},
@@ -122,7 +144,7 @@ createSuperbackground();
 /*starting up experiment*/
 function startup()
 {
-    createTestArray();
+    createTestArray();    
 //    midlineAxes();
 //    var subject = prompt('participant');
 //    changeglobal('subject', subject);
@@ -137,6 +159,7 @@ function createtrial()
     var currdata = data[num];
     var positions = globallookup('positions');
     makeDisplay(currdata, positions);
+    createOverlay(currdata, positions);
 }
 
 function makeDisplay(data, position)
@@ -154,6 +177,65 @@ function makeDisplay(data, position)
     wipetimer = setTimeout(screenwipe, 5000);
 }
 
+function createOverlay(data, position)
+{
+    var height = globallookup('barHeight');
+    var baselength = globallookup('baseLength');
+    var length = baselength * data.length;
+    var num = Math.floor(length);
+    var textoverlay = createTextArray(num, height);
+    if(data.orientation === 1)
+    {
+        textoverlay.rotation.z += Math.PI;
+    }
+    textoverlay.position.y = position.top.y;
+    textoverlay.position.x = position.top.x;
+    scene.add(textoverlay.clone());
+    textoverlay.position.y = position.bot.y;
+    textoverlay.position.x = position.bot.x;
+    scene.add(textoverlay.clone());
+}
+
+function createTextArray(num, height)
+{
+    var tempobj = new THREE.Object3D();
+    for (var i=0; i<num; i++)
+    {
+        let text = createText("E", height*.8);
+        text.position.y = -0.4*height;
+        text.position.x = -num/2 + i + .1;
+        tempobj.add(text);
+    }
+    tempobj.name = "wipe";
+    return tempobj;
+}
+
+function createText(textstring, size)
+{
+    if(loadedFont === undefined )
+    {
+        console.log("font undefined");
+        return ;
+    }
+    var parameters = {
+        font: loadedFont, 
+        size: size,
+        height: .1,
+    };
+//    var shape = new THREE.FontUtils.generateShapes("Hello World", parameters);
+//    var geometry = new THREE.ShapeGeometry(shape);
+    var geometry = new THREE.TextGeometry(textstring, parameters);
+    var properties = {
+        color: new THREE.Color(.5,.5,.5),
+        opacity: .5,
+        transparent: true
+    };
+    var material = new THREE.MeshBasicMaterial(properties);
+    var text = new THREE.Mesh(geometry, material);
+    var tempobj = new THREE.Object3D();
+    tempobj.add(text);
+    return tempobj;
+}
 function midlineAxes()
 {
     var length = w;

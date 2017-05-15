@@ -13,3 +13,8 @@ body{
     margin: 0 auto;
     /*vertical-align: middle;*/
 }
+#2dcanvas{
+    display: block;
+    background: transparent;
+    
+}

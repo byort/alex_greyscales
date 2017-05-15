@@ -3,12 +3,14 @@ function testarrayinit()
 {
     globalproperties['variables']={
         length:[1, 1.5, 2],
+        orientation: [0, 1] // 0 = normal, 1 = inverted
     }
 }
 function createTestArray()
 {
     var variables = globallookup('variables');
     var temparray = createStimulusArray(variables);
+    temparray.shuffle();
     globalproperties.data = temparray;    
 }
 
