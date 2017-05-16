@@ -90,7 +90,7 @@ makeTextures("img/greyscale", ['10.bmp','15.bmp','20.bmp']).then(function(textur
     }
     //Now do something with the texture mapped mesh
     textures = materialarray;
-    }).then(loadFont.bind( null ,"font/helvetiker_regular.typeface.json")).then(function(font){
+    }).then(loadFont.bind( null ,"font/Allstar_Regular.json")).then(function(font){
         console.log('2',font);
         loadedFont = font;
         init();
@@ -202,7 +202,7 @@ function createTextArray(letter, num, height)
     for (var i=0; i<num; i++)
     {
         let text = createText(letter, height*.8);
-        text.position.y = -0.4*height;
+        text.position.y = -0.35*height;
         text.position.x = -num/2 + i + .1;
         tempobj.add(text);
     }
@@ -220,7 +220,7 @@ function createText(textstring, size)
     var parameters = {
         font: loadedFont, 
         size: size,
-        height: .1
+        height: 1
     };
 //    var shape = new THREE.FontUtils.generateShapes("Hello World", parameters);
 //    var geometry = new THREE.ShapeGeometry(shape);
@@ -228,8 +228,8 @@ function createText(textstring, size)
     var properties = {
         color: new THREE.Color(.5,.5,.5),
 //        wireframe: true,
-        opacity: .5,
-        transparent: true
+//        opacity: .5,
+//        transparent: true
     };
     var material = new THREE.MeshBasicMaterial(properties);
     var text = new THREE.Mesh(geometry, material);
