@@ -78,7 +78,30 @@ scene.add(light);
 
 
 /**********************WORKSPACE**************************/
-makeTextures("img/greyscale", ['10.bmp','15.bmp','20.bmp']).then(function(texturearray){
+//make patharray
+function createPatharray()
+{
+    var alphaString = 'abcdefghijklmnopqrstuvwxyz';
+    var numVariations = 10;
+    var filetype = '.bmp';
+    var multiplier = ['10','15','20'];
+    var patharray = [];
+    for(let idx of multiplier)
+    {
+        for(let i=0; i<numVariations; i++)
+        {
+            let variation = alphaString[i];
+            var tempstring = idx + variation + filetype;         
+            patharray.push(tempstring);
+        }
+    }
+    return patharray;
+}
+
+var patharray = createPatharray();
+console.log(patharray.length);
+
+makeTextures("img/greyscale", patharray).then(function(texturearray){
     var materialarray = [];
     for(let val of texturearray)
     {
@@ -86,6 +109,7 @@ makeTextures("img/greyscale", ['10.bmp','15.bmp','20.bmp']).then(function(textur
             map: val,
             color: new THREE.Color(1,1,1)
         });
+        imageMaterial.name = val.name;
         materialarray.push(imageMaterial);
     }
     //Now do something with the texture mapped mesh
@@ -111,16 +135,22 @@ function maininit()
         repeat: 0,
         numRepeat: 5,
         baseLength: 4,
-        barHeight: 1
+        barHeight: 1,
+        alphaString: 'abcdefghijklmnopqrstuvwxyz',
     };
     globalproperties['positions'] = {
         top: {x:0, y:2},
         bot: {x:0, y:-2}
     };
     globalproperties['trialdata'] = {
-        trialStartTime: 0,
         luminance: .5,
         condition: null,
+        whereleft: null,
+    };
+    globalproperties['trialtimer']={
+        trialStartTime: 0,
+        minTime: 3000,
+        maxTime: 5000,
     };
 }
 /*create background for experiment*/
@@ -169,12 +199,38 @@ function makeDisplay(data, position)
     var baselength = globallookup('baseLength');
     var imagescalar = data.length;
     var length = imagescalar*baselength;
-    var top = createTexturePatch(length, texturearray, position.top);
-    var bot = createTexturePatch(length, texturearray, position.bot);
-    bot.rotation.z = Math.PI;
-    scene.add(top,bot);
+    var timer = globallookup('trialtimer');
+    var trialtimer = Math.floor(Math.random()*(timer.maxTime - timer.minTime))+timer.minTime;
+    var allocatePositions = whereisleft();
+    changeglobal('whereleft', allocatePositions)
+    if (allocatePositions === 0)
+    {
+        var leftdark = createTexturePatch(length, texturearray, position.top);
+        var rightdark = createTexturePatch(length, texturearray, position.bot);
+    }
+    else if (allocatePositions === 1)
+    {
+        var leftdark = createTexturePatch(length, texturearray, position.bot);
+        var rightdark = createTexturePatch(length, texturearray, position.top);
+    }
+    rightdark.rotation.z = Math.PI;
+    scene.add(leftdark,rightdark);
     changeglobal('trialStartTime', Date.now());
-    wipetimer = setTimeout(screenwipe, 5000);
+    wipetimer = setTimeout(screenwipe, trialtimer);
+}
+
+function whereisleft()
+{
+    var rand = Math.random();
+    if(rand < .5)
+    {
+        return 0; //top
+    }
+    else 
+    {
+        return 1; //bottom
+    }
+    
 }
 
 function createOverlay(data, position)
@@ -255,7 +311,9 @@ function midlineAxes()
 function findtextures(data)
 {
     var obj = {};
-    var name = String(data.length*10);
+    var variation = pickvar();
+    var name = String(data.length*10)+variation;
+//    console.log(name);
     for(let material of textures)
     {
         if(material.map.name === name)
@@ -265,6 +323,14 @@ function findtextures(data)
     }
     return obj;
 }
+function pickvar()
+{
+    var alphastring = 'abcdefghijklmnopqrstuvwxyz';
+    var numVariations = 10;
+    var pick = Math.floor(Math.random()*numVariations);
+    return alphastring[pick];
+}
+
 /*running the experiment*/
 function nextTrial()
 {
@@ -301,16 +367,18 @@ document.onkeydown = function(key)
 {
     if(curtime - globallookup('trialStartTime') > 500)
     {
+        let whereleft = globallookup('whereleft');
+        var leftdark = whereleft === 0?"top":"bot";
         if(key.keyCode === 84)
         {
             changeglobal('trialStartTime', Date.now());
-            resultArray = ['top'];
+            resultArray = ['top', leftdark];
             nextTrial();
         }
         else if(key.keyCode === 66)
         {
             changeglobal('trialStartTime', Date.now());
-            resultArray = ['bot'];
+            resultArray = ['bot', leftdark];
             nextTrial();
         }
     }

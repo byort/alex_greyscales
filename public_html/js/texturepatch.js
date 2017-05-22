@@ -12,6 +12,7 @@ function makeTextures(texturePath, patharray = undefined){
         console.log("Loading ", texturePath, "with:",  loader);
         // load a resource
         var texturearray = [];
+//        console.log(typeof patharray)
         if (typeof patharray === 'object')
         {
             for(let val of patharray)
@@ -20,7 +21,8 @@ function makeTextures(texturePath, patharray = undefined){
                 let texture = loader.load(temppath);
                 texture.wrapS = THREE.RepeatWrapping;
                 texture.wrapT = THREE.RepeatWrapping;
-                texture.name = val.slice(0,2);
+                texture.name = val.slice(0,3);
+//                console.log(texture.name);
                 texturearray.push(texture);
             }
         }
