@@ -8,7 +8,7 @@ function resultsinit()
     globalproperties['results'] = {
         csvString: '',
         subject: 'test',
-        headings: ['response', "whereleftdark"]
+        headings: ['response', "whereleftdark", "whereluminance"]
     }
 }
 

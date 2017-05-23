@@ -5,20 +5,34 @@
    ========================================================================== */
 body{
     overflow: hidden;
-    
 }
 
 #three-canvas{
-    display: block;
+    display: inline-block;
+    top:0px;
     margin: 0 auto;
     /*vertical-align: middle;*/
 }
-#2dcanvas{
-    display: inline;
-    vertical-align: middle;
-    background: blue;
-    top: 400px;
-    width: 322px;
-    height: 81px;
+#splashscreen{
+    display: block;
+    position: relative;
+    background: grey;
+    text-align: center;
+    font-size: large;
+    padding: 35vh;
+    margin:0 auto;
+    width: 100vw;
+    height: 100vh;
     z-index: 1;
+}
+#gobar{
+    display:none;
+    position:absolute;
+    left:0;
+    bottom:0;
+    margin:0;
+    height: 100px;
+    width: 100vw;
+    text-align: center;
+    font-size:large;
 }

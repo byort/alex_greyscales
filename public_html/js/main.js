@@ -78,7 +78,83 @@ scene.add(light);
 
 
 /**********************WORKSPACE**************************/
-//make patharray
+function setStyle()
+{
+    var e = document.getElementById('gobar');
+    var f = document.getElementById('splashscreen');
+    e.style.display = "none";
+    f.style.display = "block";
+}
+
+function init()
+{
+    globalproperties = {};
+    maininit();
+    resultsinit();
+    testarrayinit();
+    setStyle();
+    var patharray = createPatharray();
+    var patharray2 = createPatharray2();
+    makeTextures("img/greyscale", patharray).then(function(texturearray){
+        var materialarray = [];
+        for(let val of texturearray)
+        {
+            var imageMaterial = new THREE.MeshBasicMaterial({
+                map: val,
+                color: new THREE.Color(1,1,1)
+            });
+            imageMaterial.name = val.name;
+            materialarray.push(imageMaterial);
+        }
+        //Now do something with the texture mapped mesh
+        textures = materialarray;
+        }).then(makeTextures.bind( null, "img/greyscale", patharray2)).then(function(texturearray){
+        for(let val of texturearray)
+        {
+            var imageMaterial = new THREE.MeshBasicMaterial({
+                map: val,
+                color: new THREE.Color(1,1,1)
+            });
+            imageMaterial.name = val.name;
+            textures.push(imageMaterial);
+        }    
+        }).then(loadFont.bind( null ,"font/Allstar_Regular.json")).then(function(font){
+            console.log('2',font);
+            loadedFont = font;
+            changeglobal('splash',false);
+            toggleVisibility('gobar');
+    });
+}
+init();
+function maininit()
+{
+    globalproperties['main'] = {
+        num: 0,
+        repeat: 0,
+        numRepeat: 2,
+        baseLength: 4,
+        barHeight: 1,
+        alphaString: 'abcdefghijklmnopqrstuvwxyz',
+        splash:true,
+        run:false,
+    };
+    globalproperties['positions'] = {
+        top: {x:0, y:2},
+        bot: {x:0, y:-2}
+    };
+    globalproperties['trialdata'] = {
+        luminance: .5,
+        condition: null,
+        whereleft: null,
+        whereluminance: null,
+    };
+    globalproperties['trialtimer']={
+        trialStartTime: 0,
+        minTime: 3000,
+        maxTime: 5000,
+    };
+}
+/* creates patharrays for loading textures*/
 function createPatharray()
 {
     var alphaString = 'abcdefghijklmnopqrstuvwxyz';
@@ -98,61 +174,29 @@ function createPatharray()
     return patharray;
 }
 
-var patharray = createPatharray();
-console.log(patharray.length);
-
-makeTextures("img/greyscale", patharray).then(function(texturearray){
-    var materialarray = [];
-    for(let val of texturearray)
+function createPatharray2()
+{
+    var alphaString = 'abcdefghijklmnopqrstuvwxyz';
+    var numVariations = 5;
+    var filetype = '.bmp';
+    var multiplier = ['10','15','20'];
+    var luminance = ['dark', 'light'];
+    var patharray = [];
+    for (let ligs of luminance)
     {
-        var imageMaterial = new THREE.MeshBasicMaterial({
-            map: val,
-            color: new THREE.Color(1,1,1)
-        });
-        imageMaterial.name = val.name;
-        materialarray.push(imageMaterial);
+        for(let idx of multiplier)
+        {
+            for(let i=0; i<numVariations; i++)
+            {
+                let variation = alphaString[i];
+                var tempstring = idx + variation + ligs + filetype;         
+                patharray.push(tempstring);
+            }
+        }
     }
-    //Now do something with the texture mapped mesh
-    textures = materialarray;
-    }).then(loadFont.bind( null ,"font/Allstar_Regular.json")).then(function(font){
-        console.log('2',font);
-        loadedFont = font;
-        init();
-    });
+    return patharray;
+}
 
-function init()
-{
-    globalproperties = {};
-    maininit();
-    resultsinit();
-    testarrayinit();
-    startup();
-}
-function maininit()
-{
-    globalproperties['main'] = {
-        num: 0,
-        repeat: 0,
-        numRepeat: 5,
-        baseLength: 4,
-        barHeight: 1,
-        alphaString: 'abcdefghijklmnopqrstuvwxyz',
-    };
-    globalproperties['positions'] = {
-        top: {x:0, y:2},
-        bot: {x:0, y:-2}
-    };
-    globalproperties['trialdata'] = {
-        luminance: .5,
-        condition: null,
-        whereleft: null,
-    };
-    globalproperties['trialtimer']={
-        trialStartTime: 0,
-        minTime: 3000,
-        maxTime: 5000,
-    };
-}
 /*create background for experiment*/
 function createSuperbackground()
 {
@@ -195,6 +239,11 @@ function createtrial()
 function makeDisplay(data, position)
 {
     var texturearray = findtextures(data);
+    if (data.control !== 0)
+    {
+        var texture2 = findtextures(data, data.control);
+        console.log(texture2);
+    }
 //    console.log(texturearray)
     var baselength = globallookup('baseLength');
     var imagescalar = data.length;
@@ -202,16 +251,18 @@ function makeDisplay(data, position)
     var timer = globallookup('trialtimer');
     var trialtimer = Math.floor(Math.random()*(timer.maxTime - timer.minTime))+timer.minTime;
     var allocatePositions = whereisleft();
+    var allocateleftluminance = data.control !== 0?whereisleft():null
+    changeglobal('whereluminance', allocateleftluminance)
     changeglobal('whereleft', allocatePositions)
     if (allocatePositions === 0)
     {
-        var leftdark = createTexturePatch(length, texturearray, position.top);
-        var rightdark = createTexturePatch(length, texturearray, position.bot);
+        var leftdark = allocateleftluminance === 1?createTexturePatch(length, texture2, position.top):createTexturePatch(length, texturearray, position.top);
+        var rightdark = allocateleftluminance === 0?createTexturePatch(length, texture2, position.bot):createTexturePatch(length, texturearray, position.bot);
     }
     else if (allocatePositions === 1)
     {
-        var leftdark = createTexturePatch(length, texturearray, position.bot);
-        var rightdark = createTexturePatch(length, texturearray, position.top);
+        var leftdark = allocateleftluminance === 1?createTexturePatch(length, texture2, position.bot):createTexturePatch(length, texturearray, position.bot);
+        var rightdark =  allocateleftluminance === 0?createTexturePatch(length, texture2, position.top):createTexturePatch(length, texturearray, position.top);
     }
     rightdark.rotation.z = Math.PI;
     scene.add(leftdark,rightdark);
@@ -308,12 +359,21 @@ function midlineAxes()
 }
 
 
-function findtextures(data)
+function findtextures(data, luminance = undefined)
 {
     var obj = {};
-    var variation = pickvar();
-    var name = String(data.length*10)+variation;
-//    console.log(name);
+    if (luminance !== undefined)
+    {
+        var lig = luminance === 1? "light": "dark";
+        var variation = pickvar(5);
+    }
+    else
+    {
+        var variation = pickvar(10);
+        var lig = "";
+    }
+    var name = String(data.length*10)+variation+lig;
+    console.log(name);
     for(let material of textures)
     {
         if(material.map.name === name)
@@ -323,10 +383,10 @@ function findtextures(data)
     }
     return obj;
 }
-function pickvar()
+function pickvar(n)
 {
     var alphastring = 'abcdefghijklmnopqrstuvwxyz';
-    var numVariations = 10;
+    var numVariations = n;
     var pick = Math.floor(Math.random()*numVariations);
     return alphastring[pick];
 }
@@ -365,24 +425,40 @@ function nextTrial()
 
 document.onkeydown = function(key)
 {
-    if(curtime - globallookup('trialStartTime') > 500)
+    if(globallookup('run') === false && key.keyCode === 32)
+    {
+        changeglobal('run', true);
+        toggleVisibility('gobar');
+        toggleVisibility('splashscreen');
+        startup();
+    }
+    else if(curtime - globallookup('trialStartTime') > 500 && globallookup('run'))
     {
         let whereleft = globallookup('whereleft');
+        let whereluminance = globallookup('whereluminance')===0?"right":"left";
         var leftdark = whereleft === 0?"top":"bot";
         if(key.keyCode === 84)
         {
             changeglobal('trialStartTime', Date.now());
-            resultArray = ['top', leftdark];
+            resultArray = ['top', leftdark, whereluminance];
             nextTrial();
         }
         else if(key.keyCode === 66)
         {
             changeglobal('trialStartTime', Date.now());
-            resultArray = ['bot', leftdark];
+            resultArray = ['bot', leftdark, whereluminance];
             nextTrial();
         }
     }
+    
 };
+
+function toggleVisibility(id)
+{
+    console.log('toggleing: ' + id )
+    var e = document.getElementById(id);
+    e.style.display = e.style.display !== "block"?"block":"none";
+}
 
 function exit()
 {

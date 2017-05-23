@@ -21,7 +21,7 @@ function makeTextures(texturePath, patharray = undefined){
                 let texture = loader.load(temppath);
                 texture.wrapS = THREE.RepeatWrapping;
                 texture.wrapT = THREE.RepeatWrapping;
-                texture.name = val.slice(0,3);
+                texture.name = val.slice(0,-4);
 //                console.log(texture.name);
                 texturearray.push(texture);
             }

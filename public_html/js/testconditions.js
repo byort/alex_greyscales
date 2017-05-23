@@ -4,7 +4,9 @@ function testarrayinit()
     globalproperties['variables']={
         length:[1, 1.5, 2],
         orientation: [0, 1], // 0 = normal, 1 = inverted
-        letter: ['E','R','G']
+        letter: ['E','R','G'],
+        control:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1]
+//control:[1,-1],
     }
 }
 function createTestArray()
