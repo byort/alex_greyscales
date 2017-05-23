@@ -201,8 +201,9 @@ function createPatharray2()
 function createSuperbackground()
 {
     var geometry = new THREE.PlaneGeometry( w, h );
+    var val = .5;
     var properties = {
-        color: new THREE.Color(.5, .5, .5)
+        color: new THREE.Color(val, val, val)
     };
     var material = new THREE.MeshBasicMaterial( properties ); 
     var background = new THREE.Mesh( geometry, material ); 
@@ -242,7 +243,7 @@ function makeDisplay(data, position)
     if (data.control !== 0)
     {
         var texture2 = findtextures(data, data.control);
-        console.log(texture2);
+//        console.log(texture2);
     }
 //    console.log(texturearray)
     var baselength = globallookup('baseLength');
@@ -251,9 +252,9 @@ function makeDisplay(data, position)
     var timer = globallookup('trialtimer');
     var trialtimer = Math.floor(Math.random()*(timer.maxTime - timer.minTime))+timer.minTime;
     var allocatePositions = whereisleft();
-    var allocateleftluminance = data.control !== 0?whereisleft():null
-    changeglobal('whereluminance', allocateleftluminance)
-    changeglobal('whereleft', allocatePositions)
+    var allocateleftluminance = data.control !== 0?whereisleft():null;
+    changeglobal('whereluminance', allocateleftluminance);
+    changeglobal('whereleft', allocatePositions);
     if (allocatePositions === 0)
     {
         var leftdark = allocateleftluminance === 1?createTexturePatch(length, texture2, position.top):createTexturePatch(length, texturearray, position.top);
@@ -297,6 +298,7 @@ function createOverlay(data, position)
     }
     textoverlay.position.y = position.top.y;
     textoverlay.position.x = position.top.x;
+    textoverlay.position.z = 1;
     scene.add(textoverlay.clone());
     textoverlay.position.y = position.bot.y;
     textoverlay.position.x = position.bot.x;
@@ -327,7 +329,7 @@ function createText(textstring, size)
     var parameters = {
         font: loadedFont, 
         size: size,
-        height: 1
+        height: 5
     };
 //    var shape = new THREE.FontUtils.generateShapes("Hello World", parameters);
 //    var geometry = new THREE.ShapeGeometry(shape);
@@ -373,7 +375,7 @@ function findtextures(data, luminance = undefined)
         var lig = "";
     }
     var name = String(data.length*10)+variation+lig;
-    console.log(name);
+//    console.log(name);
     for(let material of textures)
     {
         if(material.map.name === name)
@@ -474,7 +476,7 @@ function screenwipe()
             scene.remove(scene.children[i]);
         }
     }
-    console.log(curtime - globallookup('trialStartTime'))
+    console.log('wiping', curtime - globallookup('trialStartTime'))
 }
 
 
@@ -485,6 +487,6 @@ function render() {
     
     requestAnimationFrame( render ); 
     renderer.render( scene, camera ); 
-
+    
 } 
 render();
