@@ -160,7 +160,7 @@ function createPatharray()
     var alphaString = 'abcdefghijklmnopqrstuvwxyz';
     var numVariations = 10;
     var filetype = '.bmp';
-    var multiplier = ['10','15','20'];
+    var multiplier = ['8','9'];
     var patharray = [];
     for(let idx of multiplier)
     {
@@ -179,7 +179,7 @@ function createPatharray2()
     var alphaString = 'abcdefghijklmnopqrstuvwxyz';
     var numVariations = 5;
     var filetype = '.bmp';
-    var multiplier = ['10','15','20'];
+    var multiplier = ['8','9'];
     var luminance = ['dark', 'light'];
     var patharray = [];
     for (let ligs of luminance)
@@ -265,10 +265,32 @@ function makeDisplay(data, position)
         var leftdark = allocateleftluminance === 1?createTexturePatch(length, texture2, position.bot):createTexturePatch(length, texturearray, position.bot);
         var rightdark =  allocateleftluminance === 0?createTexturePatch(length, texture2, position.top):createTexturePatch(length, texturearray, position.top);
     }
+    var outlineTop = outlineGreyscale(length, position.top, imagescalar);
+    var outlineBot = outlineGreyscale(length, position.bot, imagescalar);
     rightdark.rotation.z = Math.PI;
     scene.add(leftdark,rightdark);
+    scene.add(outlineTop, outlineBot);
     changeglobal('trialStartTime', Date.now());
     wipetimer = setTimeout(screenwipe, trialtimer);
+}
+
+function outlineGreyscale(length, posobj, imagescalar)
+{
+    var height = globallookup('barHeight');   
+    var scale = .01;
+    var geometry = new THREE.PlaneGeometry(length, height);
+    var properties  = {
+        color: new THREE.Color(0,0,0),
+    };
+    var material = new THREE.MeshBasicMaterial(properties);
+    var mesh = new THREE.Mesh(geometry, material);
+    mesh.position.x = posobj.x;
+    mesh.position.y = posobj.y;
+    mesh.position.z = -1;
+    mesh.name = "wipe";
+    mesh.scale.x += scale/(imagescalar*2);
+    mesh.scale.y += scale;
+    return mesh;
 }
 
 function whereisleft()
@@ -374,7 +396,7 @@ function findtextures(data, luminance = undefined)
         var variation = pickvar(10);
         var lig = "";
     }
-    var name = String(data.length*10)+variation+lig;
+    var name = String(data.length+7)+variation+lig;
 //    console.log(name);
     for(let material of textures)
     {
