@@ -131,7 +131,7 @@ function maininit()
     globalproperties['main'] = {
         num: 0,
         repeat: 0,
-        numRepeat: 2,
+        numRepeat: 1,
         baseLength: 4,
         barHeight: 1,
         alphaString: 'abcdefghijklmnopqrstuvwxyz',
@@ -277,7 +277,7 @@ function makeDisplay(data, position)
 function outlineGreyscale(length, posobj, imagescalar)
 {
     var height = globallookup('barHeight');   
-    var scale = .01;
+    var scale = .05;
     var geometry = new THREE.PlaneGeometry(length, height);
     var properties  = {
         color: new THREE.Color(0,0,0),
@@ -288,7 +288,7 @@ function outlineGreyscale(length, posobj, imagescalar)
     mesh.position.y = posobj.y;
     mesh.position.z = -1;
     mesh.name = "wipe";
-    mesh.scale.x += scale/(imagescalar*2);
+    mesh.scale.x += scale/(imagescalar*4);
     mesh.scale.y += scale;
     return mesh;
 }

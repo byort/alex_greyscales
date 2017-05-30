@@ -56,13 +56,13 @@ function outputResponses()
 {
     /* Add MIME type header to your data & encode it in URI format to download */
     var csvString = globallookup('csvString');
-    var datestring = getdate();
+//    var datestring = getdate();
     $.ajax({
         method: 'POST',
         url: 'upload.php',
         data: {
             string: csvString,
-            datestring: datestring
+//            datestring: datestring
         },
         success: function(){
             alert('Responses received. \nThank you for participating')
