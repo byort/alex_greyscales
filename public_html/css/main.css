@@ -36,3 +36,14 @@ body{
     text-align: center;
     font-size:large;
 }
+.instructionbox{
+    display:none;
+    position:absolute;
+    left:0;
+    bottom:0;
+    margin:0;
+    height: 100px;
+    width: 100vw;
+    text-align: center;
+    font-size:large;
+}

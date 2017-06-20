@@ -80,10 +80,16 @@ scene.add(light);
 /**********************WORKSPACE**************************/
 function setStyle()
 {
-    var e = document.getElementById('gobar');
-    var f = document.getElementById('splashscreen');
-    e.style.display = "none";
-    f.style.display = "block";
+    var a = document.getElementById('gobar');
+    var b = document.getElementById('instruct1');
+    var c = document.getElementById('instruct2');
+    var d = document.getElementById('splashscreen');
+    var elementlist = [a,b,c];
+    for(var e of elementlist)
+    {
+        e.style.display = "none";
+    }
+    d.style.display = "block";
 }
 
 function init()
@@ -137,6 +143,7 @@ function maininit()
         alphaString: 'abcdefghijklmnopqrstuvwxyz',
         splash:true,
         run:false,
+        task: 0,
     };
     globalproperties['positions'] = {
         top: {x:0, y:2},
@@ -449,17 +456,42 @@ function nextTrial()
 
 document.onkeydown = function(key)
 {
-    if(globallookup('run') === false && key.keyCode === 32)
+    var run = globallookup('run');
+    var time = curtime - globallookup('trialStartTime');
+    var task = globallookup('task');
+    if(!run && key.keyCode === 32)
     {
         changeglobal('run', true);
         toggleVisibility('gobar');
         toggleVisibility('splashscreen');
+        toggleVisibility('instruct1');
         startup();
     }
-    else if(curtime - globallookup('trialStartTime') > 500 && globallookup('run'))
+    else if(task === 0 && run && time > 500)
     {
+        changeglobal('task', 1);
+        toggleVisibility('instruct1');
+        toggleVisibility('instruct2');
+    }
+    else if((task === 1 && time > 500 && run)&&(key.keyCode === 84 || key.keyCode === 66))
+    {
+        changeglobal('task', 0);
+        toggleVisibility('instruct1');
+        toggleVisibility('instruct2');
         let whereleft = globallookup('whereleft');
-        let whereluminance = globallookup('whereluminance')===0?"right":"left";
+        let luminance = globallookup('whereluminance');
+        switch(luminance){
+            case 0:
+                var whereluminance = "right"
+                break;
+            case 1:
+                var whereluminance = "left"
+                break;
+            default:
+                var whereluminance = "none"
+                break;
+        }
+        console.log(whereluminance)
         var leftdark = whereleft === 0?"top":"bot";
         if(key.keyCode === 84)
         {
@@ -474,7 +506,6 @@ document.onkeydown = function(key)
             nextTrial();
         }
     }
-    
 };
 
 function toggleVisibility(id)

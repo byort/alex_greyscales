@@ -4,7 +4,7 @@ function testarrayinit()
     globalproperties['variables']={
         length:[1, 2],
         orientation: [0, 1], // 0 = normal, 1 = inverted
-        letter: ['E','R','G'],
+        letter: ['a','e','k', 'r'],
         control:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,-1]
 //control:[1,-1],
     }
